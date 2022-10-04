@@ -1,0 +1,38 @@
+MEIJER
+Worked on prototyping a Rancher cluster to manage downstream clusters
+Integrate Rancher with AD
+You can manage the entire range of clusters from this interface.
+can use commad line too
+
+Open shift
+Prepare the cluster(install required tools via helm,
+ longhorn for persistant storage(DB), 
+ Kafka for messaging,
+ Grafana for logging, 
+ ELK Stack(Elasticsearch(a document DB to search logs etc.,), 
+			Logstash pumps in data to Elastic Search and 
+			Kibana is used to visualize the data),
+ Twistlock to identify security vulnarabilities
+ Istio service mesh for traffic, policy and telemetry 
+ CSI divers (container storage interface to read secrets from keyvault)
+ 
+ 
+ Created devops pipelines to build the solution, generate an image, store in the repository, generate deployment Yamls per environment
+ used templates for build and deployment sections so multiple applications can use the same format.
+ Configured gitops with flux to ensure changes to workload yamls gets deployed to cluster
+ 
+ 
+WALGREENS
+
+
+created the AKS foundation 
+Used Terraforms to setup the environment.(init, plan, apply) DSC 
+Azure devops for sourcecode/build/deploy
+Had prebuilt workloads which have to be modified(shell scripting /sed) as per the environment using shell scripting and deploy the same to the cluster.
+Monitoring and trouble shooting
+Ensure the correct keys/secrets are used based on the environment.
+This involves interacting with the client team to get the right information.
+
+
+THERMOFISHER
+
