@@ -1,1 +1,66 @@
-this is a test file with 1
+name: Continuous Build
+
+on:
+  push:
+    branches-ignore:
+      - "main"
+  workflow_dispatch:
+    secrets:
+        ARTIFACTORY_SAAS_URL:
+          required: true
+          description: "ARTIFACTORY_SAAS_URL"
+        ARTIFACTORY_SAAS_USERNAME:
+          required: true
+          description: "ARTIFACTORY_SAAS_USERNAME"
+        ARTIFACTORY_SAAS_PASSWORD:
+          required: true
+          description: "ARTIFACTORY_SAAS_PASSWORD"
+          
+env:
+  ARTIFACTORY_SAAS_URL: https://krogertechnology.jfrog.io/artifactory/api/npm
+  AZURE_WEBAPP_NAME: "app-sc-ct-sand2-eastus2"    # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: './build'      # set this to the path to your web app project, defaults to the repository root
+
+jobs:
+  npm-build:
+    name: Continuous Build
+    runs-on: kubernetes
+    environment: sand
+    container:
+      image: krogertechnology-docker-remote.jfrog.io/library/node:16.14.0-slim
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_SAAS_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_SAAS_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache node_modules
+        id: cache-nodemodules
+        uses: actions/cache@v2
+        with:
+          path: 'node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache-nodemodules.outputs.cache-hit != true
+        shell: bash
+        run: |
+          apt-get update && apt-get install curl -y
+          npm config set registry ${{ env.ARTIFACTORY_SAAS_URL }}/npm-repo/
+          echo "Adding jfrog access credentials to .npmrc"
+          curl -u ${{ secrets.ARTIFACTORY_SAAS_USERNAME }}:${{ secrets.ARTIFACTORY_SAAS_PASSWORD }} ${{ env.ARTIFACTORY_SAAS_URL }}/auth >> .npmrc
+          echo "Checking yarn config"
+          yarn config list
+          yarn install
+
+      - name: Build Application
+        run: yarn build
+
+      - name: 'Deploy to Azure WebApp'
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
