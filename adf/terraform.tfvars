@@ -1,0 +1,8 @@
+location             = "eastus"
+environment          = "dev"
+project              = "test"
+vnetCidr             = "10.0.0.0/16"
+beSubnetCidr         = "10.10.0.0/24"
+feSubnetCidr         = "10.20.0.0/24"
+plsSubnetCidr        = "10.30.0.0/24"
+gwsubnetcidr         = "10.40.0.0/24"
