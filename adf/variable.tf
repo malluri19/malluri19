@@ -1,39 +1,46 @@
-variable "location" {
-  type        = string
-  description = "(Optional) The location for resource deployment"
-}
-
-variable "environment" {
-  type        = string
-  description = "(Required) Three character environment name"
-
-  validation {
-    condition     = length(var.environment) <= 3
-    error_message = "Err: Environment cannot be longer than three characters."
-  }
-}
-
 variable "project" {
   type        = string
-  description = "(Required) The project name"
 }
-
+variable "environment" {
+  type        = string
+  description = "Name of the deployment environment"
+}
+variable "prefix" {
+  type        = string
+}
+variable "locationprefix" {
+  type = list(string)
+}
+variable "location" {
+  type = string
+}
+# variable "rgname" {
+#   type = string
+# }
+variable "vnetname" {
+  type = string
+}
 variable "vnetCidr" {
-    type = string
+  type = string
 }
-
 variable "beSubnetCidr" {
-    type = string
+  type = string  
 }
-
 variable "feSubnetCidr" {
-    type = string
+  type = string  
 }
-
 variable "plsSubnetCidr" {
+  type = string  
+}
+variable "gwsubnetcidr" {
+  type = string  
+}
+variable "lbname" {
     type = string
 }
-
-variable "gwsubnetcidr" {
+variable "lb_sku" {
+    type = string
+}
+variable "vmname" {
     type = string
 }
