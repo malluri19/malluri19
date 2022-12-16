@@ -42,6 +42,13 @@ resource "azurerm_data_factory_managed_private_endpoint" "adf-msssql-pe" {
   subresource_name   = "sqlServer"
 }
 
+resource "azurerm_data_factory_linked_service_azure_sql_database" "linked_service_azure_sql_database" {
+  name                     = var.name
+  resource_group_name      = var.resource_group_name
+  data_factory_name        = var.data_factory_name
+  description              = try(var.description, null)
+  integration_runtime_name = try(var.integration_runtime_name, null)
+}
 resource "azurerm_data_factory_integration_runtime_azure" "adf" {
   name                    = var.adfintrunname
   data_factory_id         = azurerm_data_factory.my_adf.id
