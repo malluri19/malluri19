@@ -21,3 +21,26 @@ resource "azurerm_linux_virtual_machine" "testingvm" {
     public_key                = module.vm_key_pair.pair_key_pub_value_openssh
   }
 }
+
+
+9 data "azurerm_shared_image_version" "kroger_shared_image" {
+
+provider
+
+name
+
+☐ azurerm.CloudOps Subscription
+
+☐ var.vm_kroger_shared_image_version
+
+3 image_name
+
+☐ var.vm_kroger_shared_image_name
+
+gallery_name
+
+☐ var.vm_kroger_shared_image_gallery_name
+
+2
+
+3 resource_group_name = var.vm_kroger_shared_image_gallery-resource_group
