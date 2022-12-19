@@ -1,121 +1,23 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+resource "azurerm_linux_virtual_machine" "testingvm" {
+  name                        = "testingvm"
+  resource_group_name         = var.resource_group_name
+  location                    = var.location
 
-name: Node.js CI
+  size                        = "Standard_D2s_v4"
+  network_interface_ids       = [azurerm_network_interface.testingvm.id]
 
-on:
-  push:
-    branches: [ "main", "uat", "origin/dev" ]
-  pull_request:
-    branches: [ "main", "uat", "origin/dev"]
-  workflow_dispatch:
+  admin_username              = "azureuser"
 
-jobs:
-  Build_dev:
-    name: Build Development
-    if: |
-      github.event_name == 'push'  ||
-      (github.event_name == 'pull_request' && github.head_ref == 'origin/dev')
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
-    environment: 
-      name: Development
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
-        with:
-          name: arunnetha/react    #https://github.com/arunnetha/react.git
-          ref: refs/heads/origin/dev
-      - name: Use Node.js ${{ matrix.node-version }}
-        # uses: actions/setup-node@v3
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install dependencies, build and test
-        run: |
-            npm install
-            npm run build
-            npm test
-      
-      # Share artifact inside workflow
-      - name: Share artifact inside workflow
-        uses: actions/upload-artifact@v3
-        with:
-          name: react-github-actions-build
-          path: build
+  source_image_id             = "/subscriptions/MY_SUBSCRIPTION/resourceGroups/myrg/providers/Microsoft.Compute/galleries/myGallery/images/myImage/versions/1.0.0"
 
-  Feature_build:
-    name: Build feature
-    if: |
-      github.event_name == 'push'  ||
-      (github.event_name == 'pull_request' && github.head_ref == 'uat')
-    # if: github.event_name == 'pull_request'
-    needs: [Build_dev]
-    runs-on: ubuntu-latest
-    environment: 
-      name: Development
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
-        with:
-          name: arunnetha/react    #https://github.com/arunnetha/react.git
-          ref: refs/heads/uat
-      - name: Use Node.js ${{ matrix.node-version }}
-        # uses: actions/setup-node@v3
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm install
-      # - run: npm ci
-      - name: build
-        run: npm run build
-      - run: npm test
-      
-      # Share artifact inside workflow
-      - name: Share artifact inside workflow
-        uses: actions/upload-artifact@v3
-        with:
-          name: react-github-actions-build
-          path: build
+  os_disk {
+    name                      = "testingvm-os"
+    caching                   = "ReadWrite"
+    storage_account_type      = "Premium_LRS"
+  }
 
-  Build_Production:
-    name: Build Production
-    if: |
-      github.event_name == 'push'  ||
-      (github.event_name == 'pull_request' && github.head_ref == 'master')
-    needs: [Build_dev]
-    runs-on: ubuntu-latest
-    environment: 
-      name: production
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
-        with:
-          name: arunnetha/react    #https://github.com/arunnetha/react.git
-          ref: refs/heads/origin/master
-      - name: Use Node.js ${{ matrix.node-version }}
-        # uses: actions/setup-node@v3
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm install
-      # - run: npm ci
-      - name: build
-        run: npm run build
-      - run: npm test
-      
-      # Share artifact inside workflow
-      - name: Share artifact inside workflow
-        uses: actions/upload-artifact@v3
-        with:
-          name: react-github-actions-build
-          path: build
-
-
+  admin_ssh_key {
+    username                  = "azureuser"
+    public_key                = module.vm_key_pair.pair_key_pub_value_openssh
+  }
+}
