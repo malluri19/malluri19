@@ -1,0 +1,16 @@
+{
+    "subscription_env": {
+      "main": "prod",
+      "prod": "prod",
+      "stage": "prod",
+      "test": "nonprod",
+      "dev": "nonprod",
+      "nonprod": "nonprod",
+      "sandbox": "nonprod"
+    },
+    "subscription_id": {
+      "prod": "",
+      "nonprod": "0e06fee6-b7f3-4194-979a-e16195abcbfa",
+      "null": "0e06fee6-b7f3-4194-979a-e16195abcbfa"
+    }
+  }

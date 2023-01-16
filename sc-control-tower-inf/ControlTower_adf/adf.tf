@@ -1,0 +1,19 @@
+module "adf" {
+    source              = "../modules/adf"
+    adfname             = var.adfname
+    rgname              = data.azurerm_resource_group.rgname.name
+    location            = var.location
+    dfpep               = var.dfpep
+    target_resource_id  = data.azurerm_storage_account.storage_id.id
+    subresource_name    = var.subresource_name
+    dfsqllinkname       = var.dfsqllinkname
+    connection_string   = var.connection_string
+    dfsqltablename      = var.dfsqltablename
+    adfprivatendpoint  = var.adfprivatendpoint
+    adfintrunname       = var.adfintrunname
+    dbsname             = var.dbsname
+    dbname              = var.dbname
+    collation           = var.collation
+    sku_name            = var.sku_name
+    adfmssqlpe          = var.adfmssqlpe
+}
